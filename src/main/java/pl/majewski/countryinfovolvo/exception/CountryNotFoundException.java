@@ -1,7 +1,9 @@
 package pl.majewski.countryinfovolvo.exception;
 
-public class CountryNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class CountryNotFoundException extends ServiceException {
     public CountryNotFoundException(String message) {
-        super(message);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

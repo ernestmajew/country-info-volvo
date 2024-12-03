@@ -1,7 +1,9 @@
 package pl.majewski.countryinfovolvo.exception;
 
-public class InvalidCountryCodeException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InvalidCountryCodeException extends ServiceException {
     public InvalidCountryCodeException(String message) {
-        super(message);
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }

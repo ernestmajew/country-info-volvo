@@ -1,10 +1,10 @@
 package pl.majewski.countryinfovolvo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import pl.majewski.countryinfovolvo.configuration.CountryApiProperties;
 import pl.majewski.countryinfovolvo.dto.RestCountryDto;
 import pl.majewski.countryinfovolvo.repository.CountryRepository;
 import pl.majewski.countryinfovolvo.util.ModelMapper;
@@ -17,24 +17,23 @@ public class RestCountryService {
     private final ModelMapper modelMapper;
     private final CountryRepository countryRepository;
     private final WebClient webClient;
-    private final String requestUri;
+    private final CountryApiProperties apiProperties;
 
     public RestCountryService(
             ModelMapper modelMapper,
             CountryRepository countryRepository,
-            @Value("${external.countryApi.base-url}") String baseUrl,
-            @Value("${external.countryApi.fields-uri}") String fieldsUrl) {
+            CountryApiProperties countryApiProperties) {
         this.countryRepository = countryRepository;
         this.modelMapper = modelMapper;
-        this.webClient = WebClient.create(baseUrl);
-        this.requestUri = fieldsUrl;
+        this.apiProperties = countryApiProperties;
+        this.webClient = WebClient.create(apiProperties.getBaseUrl());
     }
 
     public void seedDatabaseWithCountriesFromApi() {
         try {
             log.info("Fetching country data from API");
             List<RestCountryDto> restCountryDtoList = webClient.get()
-                    .uri(requestUri)
+                    .uri(apiProperties.getFieldsUri())
                     .retrieve()
                     .bodyToFlux(RestCountryDto.class)
                     .collectList()
